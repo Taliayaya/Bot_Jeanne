@@ -1,0 +1,61 @@
+require('dotenv').config();
+
+const fs = require('node:fs');
+const path = require('node:path');
+
+const { REST, Routes } = require('discord.js');
+const { CLIENT_ID, GUILD_ID, TOKEN } = process.env;
+
+const commands = [];
+const commandsPath = path.join(__dirname, 'commands');
+const commandFiles = fs
+	.readdirSync(commandsPath)
+	.filter((file) => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+	const filePath = path.join(commandsPath, file);
+	const command = require(filePath);
+	commands.push(command.data.toJSON());
+}
+const globalCommands = [];
+const globalCommandsPath = path.join(__dirname, 'global-commands');
+const globalCommandFiles = fs
+	.readdirSync(globalCommandsPath)
+	.filter((file) => file.endsWith('.js'));
+
+for (const file of globalCommandFiles) {
+	const filePath = path.join(globalCommandsPath, file);
+	const globalCommand = require(filePath);
+	globalCommands.push(globalCommand.data.toJSON());
+}
+
+const rest = new REST({ version: '10' }).setToken(TOKEN);
+
+(async () => {
+	try {
+		console.log(
+			`Started refreshing ${commands.length} application (/) commands.`,
+		);
+
+		const data = await rest.put(
+			Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
+			{ body: commands },
+		);
+		console.log(
+			`Successfully registered ${data.length} application (/) commands.`,
+		);
+
+		console.log(
+			`Started refreshing ${globalCommands.length} global (/) commands.`,
+		);
+
+		const dataGlobal = await rest.put(Routes.applicationCommands(CLIENT_ID), {
+			body: globalCommands,
+		});
+		console.log(
+			`Successfully registered ${dataGlobal.length} global (/) commands.`,
+		);
+	} catch (error) {
+		console.error(error);
+	}
+})();

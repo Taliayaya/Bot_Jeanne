@@ -1,0 +1,18 @@
+{
+  "name": "jeanne_d_arc_bot",
+  "version": "1.0.0",
+  "description": "A discord bot to handle basic stuff for the A2 students !",
+  "main": "index.js",
+  "repository": "git@github.com:Taliayaya/Bot_Jeanne.git",
+  "author": "Taliayaya <ilanvinord@gmail.com>",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "csv": "^6.2.0",
+    "discord.js": "^14.5.0",
+    "dotenv": "^16.0.3",
+    "fast-csv": "^4.3.6"
+  },
+  "devDependencies": {
+    "eslint": "^8.24.0"
+  }
+}
